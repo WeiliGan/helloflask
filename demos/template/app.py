@@ -1,6 +1,6 @@
 import os
 import click
-from flask import Flask, request, redirect, url_for, session, abort, json
+from flask import Flask, request, redirect, url_for, session, abort, json, render_template
 from flask import make_response
 from flask import jsonify
 from urllib.parse import urlparse, urljoin
@@ -15,7 +15,7 @@ app.secret_key = os.getenv('SECRET_KEY', 'secret string')
 # 创建实例程序
 @app.route('/')
 def index():
-    return '<h1>Hello Flask!</h1>'
+    return '<h1>WeiliGan</h1>'
 
 
 # 动态URL
@@ -201,3 +201,29 @@ $(function() {
 @app.route('/more')
 def load_post():
     return generate_lorem_ipsum(n=1)
+
+
+'''第三章，模板'''
+# 创建模板
+user = {
+    'username': 'WeiliGan',
+    'bio': 'A boy who loves movies and music.'
+}
+
+movies = [
+    {'name': 'My Neighbor Tororo', 'year': '1998'},
+    {'name': 'Three Colours trilogy', 'year': '1993'},
+    {'name': 'Forrest Gump', 'year': '1994'},
+    {'name': 'Perfect Bule', 'year': '1997'},
+    {'name': 'The Matrix', 'year': '1999'},
+    {'name': 'Memento', 'year': '2000'},
+    {'name': 'The Bucket list', 'year': '2007'},
+    {'name': 'Black Swan', 'year': '2010'},
+    {'name': 'Gone Girl', 'year': '2014'},
+    {'name': 'CoCo', 'year': '2017'},
+]
+
+
+@app.route('/watchlist')
+def watchlist():
+    return render_template('watchlist.html', user=user, movies=movies)
