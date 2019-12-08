@@ -4,6 +4,7 @@ from flask import Flask, request, redirect, url_for, session, abort, json
 from flask import make_response
 from flask import jsonify
 from urllib.parse import urlparse, urljoin
+from jinja2.utils import generate_lorem_ipsum
 # from flask import g
 app = Flask(__name__)
 
@@ -76,7 +77,7 @@ def foo():
 @app.route('/foo_a')
 def foo_a():
     data = {
-        'name': 'WeiliGan', 
+        'name': 'WeiliGan',
         'gender': 'male'
     }
     a = make_response(json.dumps(data))
@@ -170,3 +171,33 @@ def is_safe_url(target):
     ref_url = urlparse(request.host_url)
     test_url = urlparse(urljoin(request.host_url, target))
     return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
+
+
+# 异步加载长文章示例，显示虚拟文章
+@app.route('/post')
+def show_post():
+    # 生成两段随机文本
+    post_body = generate_lorem_ipsum(n=2)
+    return '''
+<h1>A very long post</h1>
+<div class="body">%s</div>
+<button id="lode">Lode More</button>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+$(function() {
+    $('#load').click(function() {
+        $.ajax({
+            url: '/more',
+            type: 'get',
+            success: function(data) {
+                $('.body').append(data);
+            }
+        })
+    })
+})
+</script>''' % post_body
+
+
+@app.route('/more')
+def load_post():
+    return generate_lorem_ipsum(n=1)
